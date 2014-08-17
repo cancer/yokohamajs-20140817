@@ -1,6 +1,6 @@
-帰ってきたYokohama.js (#yjs20140419)
+Yokohama.js (#yjs20140817)
 
-## JavaScriptでKeyframeAnimationを<br>作ってみた
+#CSS Spriteを動的生成して快適ソシャゲ開発
 
 ---
 
@@ -13,158 +13,117 @@
 フロントエンドエンジニアやってます
 
 最近はBackbone / Marionette / AngularJS あたりを触ったり<br>
-CSS書いたりなど
+CSSの設計したりなど
 
 ---
 
-## CSS Animation
+# 流れ
+- Image Assets Generatorで画像を書き出す
+- Compassが監視してるフォルダに配置する
+- Compass watch
 
 ---
 
-### CSS Animation
+## Image Assets Generatorで画像を書き出す
 
-- CSSにkeyframe書いて...
-- アニメーション用のclassを作ってプロパティ書いて...
-- JSからclassの操作して...
-- ...
-
----
-
-## めんどくさい
+- [ファイル] → [生成]にチェックを入れておく
+- レイヤーにファイル名をつけておく
+- レイヤーが更新されると指定した名前で自動的に書き出し
+- ※ Photoshop CC以降
 
 ---
 
-## どうせJS使うなら全部JSでやってしまおう
+## Compassが監視してるフォルダに配置する
+
+- 職人が丹精込めて一つ一つ移動
 
 ---
 
-### css-animations.js
+## Compass watch
 
-https://github.com/jlongster/css-animations.js
+- CSSの生成と一緒にSpriteファイルも生成してくれる
+- 便利！
 
-- DOMからCSSにアクセスして色々やってくれる
- - CSSファイルで定義したkeyframeを取ってきたり
- - JavaScriptから動的にkeyframeを生成したり
-- オブジェクトでkeyframeのプロパティを渡してあげる
+---
 
-```javascript
-var anim1 = CSSAnimations.get("anim1");
-var anim2 = CSSAnimations.create("anim2", {
-    "0%": { "background-color": "red" },
-    "100%": { "background-color": "blue" }
-```
+# CSS Sprite Helpers for Compass
+
+http://compass-style.org/reference/compass/helpers/sprites/
+
+---
+
+## CSS Sprite Helpers(略)のいいところ
+
+- 導入が楽
+ - Compassが用意しているfunctionを使えばすぐ
+ - Sass(SCSS)ファイルに書いていくだけ
+
+---
+
+## CSS Sprite Helpers(略)のよくないところ
+
+- 謎い
+ - マッピング情報はRuby側で管理
+ - functionで取得するのでキャッシュしておかないといけない
 
 --
 
-### css-animations.js
-
-- ベンダープレフィックスが必要なプロパティの記述が冗長
- - transform系のプロパティも冗長になりがち
-- アニメーションのプロパティ(animation-name/animation-durationなど)は別途DOMの操作が必要
-
-```javascript
-var anim = CSSAnimations.create("anim", {
-    "0%": {
-      opacity: "0.5",
-      border-radius: "0"
-      "-webkit-border-radius": "0"
-      transform: "translate(0, 0) rotate(90deg) scale(1)"
-      "-webkit-transform": "translate(0, 0) rotate(90deg) scale(1)"
-    },
-    "100%": {
-      opacity: "1",
-      border-radius: "5px"
-      "-webkit-border-radius": "5px"
-      transform: "translate(100px, 50px) rotate(180deg) scale(2)"
-      "-webkit-transform": "translate(100px, 50px) rotate(180deg) scale(2)"
-    }
-
-$("#animation").css({
-  "animation-name": "anim",
-  "animation-duration": "5s"
-  "animation-timing-function": "linear"
-  "animation-delay": "1s"
-  "animation-fill-mode": "both"
-});
-```
-
----
-
-## まだめんどくさい
-
----
-
-### keyframe-animations.js ｶｯｺｶﾘ
-
-https://github.com/cancer/keyframe-animations.js
-
-- (さっき)つくりました
-- No more ベンダープレフィックス
-- transform系も見やすく
-- アニメーションのプロパティも一緒に設定できます
-
-```javascript
-var animation = keyframeAnimation.setup({
-  name: "anim",
-  keyframe: {
-    "0%": {
-      opacity: "0.5",
-      borderRadius: "0",
-      translate: "0 0",
-      rotate: "90deg",
-      scale: "1"
-    },
-    "100%": {
-      opacity: "1",
-      borderRadius: "5px",
-      translate: "100px 50px",
-      rotate: "180deg",
-      scale: "2"
-    }
-  },
-  animation: {
-    duration: "5s",
-    timingFunction: "linear",
-    delay: "1s",
-    fillMode: "both"
-  }
-});
-```
+- 遅い
+ - CSSの生成が遅くなる(画像の変更が無くても+数秒)
+ - Sass(SCSS)に変更があるたびに画像の差分をチェック
+ - (Spriteの生成が遅いわけではないです、たぶん)
 
 --
 
-### keyframe-animations.js ｶｯｺｶﾘ
+- 画像生成後にgrunt-watchが走らない
+ - 画像の最適化とかしてると地味につらい
 
-- アニメーションの実行/停止もかんたん
- - animationEndで何かしたいとかもできます
+---
 
-```javascript
-// アニメーション実行
-animation.animate($("#animation"));
+# grunt-spritesmith
 
-// アニメーション停止
-animation.freeze();
+https://github.com/Ensighten/grunt-spritesmith
 
-// animationEndで何か実行したい
-animation.animate($("#animation"), function($element){
-  // アニメーションが終わったら要素を非表示にする
-  $element.hide()
-});
-```
+---
+
+## grunt-spritesmithのいいところ
+
+- Compass...というかSassに非依存
+ - LESSでもStylusでも使える
+- CSSの生成とCSS Spriteの生成を分離できる
+ - CompassはCSSの生成に集中
+ - CSSの生成が早くなる
 
 --
 
-### keyframe-animations.js ｶｯｺｶﾘ
+- Compassみたいにブラックボックスじゃない
+ - マッピング情報はSass(SCSS)の変数化される
+ - 変数にアクセスするfunctionも一緒に書きだされる
 
-- アニメーションのライブラリを作ったりすると捗るはず
+---
 
-![](http://i.gyazo.com/90622a58e2134b64bfdf3dc47111899e.png)
+## grunt-spritesmithのよくないところ
 
-```javascript
-var animationLibrary = new AnimationLibrary();
-animationLibrary.setupModalAnimation();
-```
-こんな感じで
+- フォルダが分けられない
+ - 一つのフォルダを監視して一つのSpriteを生成する
+- CompassのI/Fと差異があるので、途中からの移行がつらい
+ - 規模が大きくなってくると全部差し替えとかやってられない
+
+---
+
+## もう少し使いやすく...
+
+- 複数のフォルダを監視するgruntTaskを作成
+ - 対象のフォルダ以下にあるフォルダ名でSpriteファイルを生成
+ - grunt-spritesmithが作るマッピング情報をJSONで保存
+ - パースしてSass(SCSS)のMapに変換
+- 既存のI/Fを再利用
+
+---
+
+## 今後やりたいこと
+- Image Assets GeneratorとCLIの連携
+ - 職人のぬくもりを機械で置き換えたい
 
 ---
 
