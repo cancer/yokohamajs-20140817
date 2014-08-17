@@ -1,6 +1,6 @@
 Yokohama.js (#yjs20140817)
 
-#CSS Spriteを動的生成して快適ソシャゲ開発
+## CSS Spriteを動的生成して快適ソシャゲ開発
 
 ---
 
@@ -17,14 +17,14 @@ CSSの設計したりなど
 
 ---
 
-# 流れ
-- Image Assets Generatorで画像を書き出す
-- Compassが監視してるフォルダに配置する
-- Compass watch
+## 生成の流れ
+- Image Assets Generator(Photoshop)
+- フォルダに配置
+- Compass (grunt-watch)
 
 ---
 
-## Image Assets Generatorで画像を書き出す
+## Image Assets Generator(Photoshop)
 
 - [ファイル] → [生成]にチェックを入れておく
 - レイヤーにファイル名をつけておく
@@ -33,20 +33,20 @@ CSSの設計したりなど
 
 ---
 
-## Compassが監視してるフォルダに配置する
+## フォルダに配置
 
 - 職人が丹精込めて一つ一つ移動
 
 ---
 
-## Compass watch
+## Compass (grunt-watch)
 
 - CSSの生成と一緒にSpriteファイルも生成してくれる
 - 便利！
 
 ---
 
-# CSS Sprite Helpers for Compass
+## CSS Sprite Helpers for Compass
 
 http://compass-style.org/reference/compass/helpers/sprites/
 
@@ -68,6 +68,8 @@ http://compass-style.org/reference/compass/helpers/sprites/
 
 --
 
+## CSS Sprite Helpers(略)のよくないところ
+
 - 遅い
  - CSSの生成が遅くなる(画像の変更が無くても+数秒)
  - Sass(SCSS)に変更があるたびに画像の差分をチェック
@@ -75,12 +77,14 @@ http://compass-style.org/reference/compass/helpers/sprites/
 
 --
 
+## CSS Sprite Helpers(略)のよくないところ
+
 - 画像生成後にgrunt-watchが走らない
  - 画像の最適化とかしてると地味につらい
 
 ---
 
-# grunt-spritesmith
+## grunt-spritesmith
 
 https://github.com/Ensighten/grunt-spritesmith
 
@@ -95,6 +99,8 @@ https://github.com/Ensighten/grunt-spritesmith
  - CSSの生成が早くなる
 
 --
+
+## grunt-spritesmithのいいところ
 
 - Compassみたいにブラックボックスじゃない
  - マッピング情報はSass(SCSS)の変数化される
@@ -122,7 +128,7 @@ https://github.com/Ensighten/grunt-spritesmith
 ---
 
 ## 今後やりたいこと
-- Image Assets GeneratorとCLIの連携
+- Image Assets Generatorとgruntの連携
  - 職人のぬくもりを機械で置き換えたい
 
 ---
